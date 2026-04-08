@@ -249,6 +249,7 @@ function init(){
   document.getElementById('todayDate').textContent=t.toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   buildClsTabs();
   initDay();
+  renderDay();
   loadDay();
   loadHonor();
 }
@@ -261,7 +262,7 @@ function switchCls(i,btn){
   curCls=i;
   document.querySelectorAll('.cls-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  initDay();loadDay();
+  initDay();renderDay();loadDay();
 }
 
 function showSection(id,btn){
@@ -280,7 +281,7 @@ function initDay(){
 
 async function loadDay(){
   const date=document.getElementById('dateInput').value;
-  if(!date)return;
+  if(!date){renderDay();return;}
   loading(true);
   try{
     const recs=await sbGet('daily_records',{class_index:`eq.${curCls}`,record_date:`eq.${date}`,select:'*'});
@@ -292,7 +293,7 @@ async function loadDay(){
     });
     renderDay();
     toast('✅ تم التحميل','success');
-  }catch(e){console.error(e);toast('❌ خطأ في التحميل','error');}
+  }catch(e){console.error(e);renderDay();toast('⚠️ تعذر التحميل من السحابة، الجدول جاهز للإدخال','info');}
   loading(false);
 }
 
